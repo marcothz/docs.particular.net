@@ -75,11 +75,12 @@ The Adapter project hosts the `ServiceControl.TransportAdapter`. The adapter has
 
 snippet: AdapterTransport
 
-The following code configures the adapter to use a custom schema (`adapter`) within the shared database. It also maps the schema for the Shipping endpoint. Notice there is no need to map the schema for the Sales endpoint. This is because NServiceBus Version 5 and below did not include the schema name in the address.
+The following code configures the adapter to use a custom schema (`adapter`) within the shared database. It also maps the schema for the Shipping endpoint. This is because NServiceBus Version 5 and below did not include the schema name in the address. Notice there is no need to map the schema for the Sales endpoint which uses NServiceBus 6. Starting from Version 6, the schema name [is included in the address](/transports/sql/addressing.md?version=sqlserver_3). 
 
 snippet: EndpointSideConfig
 
-Starting from Version 6, the schema name [is included in the address](/transports/sql/addressing.md?version=sqlserver_3).
+The transaction level is set to `SendsAtomicWithReceive` in order to ensure messages are not duplicated when forwarded while avoiding the need to set up the Distributed Transaction Coordinator (DTC). This is because despite the connection strings for both sides of the adapter are different, when actually forwarding the messages, the existing receive connection is used to push the message forward. Since both catalogs reside on same instance of SQL Server the single phase SQL Server transaction can be used.
+
 
 The following code configures the adapter to communicate with ServiceControl:
 
